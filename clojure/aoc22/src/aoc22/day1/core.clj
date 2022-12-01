@@ -17,11 +17,13 @@
              (map str/split-lines %)
              (map #(map read-string %) %)))
 
-(def part1-solution (apply max (map #(reduce + %) input)))
+(def total-calories-per-elf (map #(reduce + %) input))
 
-(def part2-solution (as-> (map #(reduce + %) input) %
-                      (sort > %)
-                      (take 3 %)
-                      (apply + %)))
+(def part1-solution (apply max total-calories-per-elf))
+
+(def part2-solution (->> total-calories-per-elf
+                         (sort >)
+                         (take 3)
+                         (apply +)))
 
 
