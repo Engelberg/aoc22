@@ -1,0 +1,19 @@
+import util, sat.
+
+main => time(main("input.txt")).
+
+main(File) =>
+    read_data(File,Nums),
+    print_result(Nums).
+
+read_data(File,Nums) =>
+    Lines = read_file_lines(File),
+    Nums = Lines.map(to_integer).to_array().
+
+print_result(Nums) =>
+    foreach (Num in Nums)
+      println(Num)
+    end.
+    
+	   
+	   

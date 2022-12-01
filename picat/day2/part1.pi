@@ -1,0 +1,32 @@
+import util, sat.
+
+main => time(main("input.txt")).
+
+main(File) =>
+    read_data(File,Nums),
+    DescendingNums = sort_down(Nums),
+    println(DescendingNums[1]),
+    println(DescendingNums[1]+DescendingNums[2]+DescendingNums[3]).
+
+read_data(File,Nums) =>
+    Lines = read_file_lines(File).to_array(),
+    parse_lines(1,0,Lines,Nums).
+    
+parse_lines(I,Calories,Lines,Nums) =>
+    if (I > Lines.length()) then
+      Nums = []
+    elseif (Lines[I] == "") then
+      Nums = [Calories|Tail],
+      parse_lines(I+1,0,Lines,Tail)
+    else
+      Calories := Calories + to_integer(Lines[I]),
+      parse_lines(I+1,Calories,Lines,Nums)
+    end.
+
+print_result(Nums) =>
+    foreach (Num in Nums)
+      println(Num)
+    end.
+    
+	   
+	   
