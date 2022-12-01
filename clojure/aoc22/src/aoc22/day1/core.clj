@@ -10,12 +10,18 @@
             [ubergraph.core :as uber]
             [ubergraph.alg :as alg]
             [instaparse.core :as insta]
-            [clojure.data.priority-map :as pm]))
+            [clojure.data.priority-map :as pm]
+            [com.rpl.specter :refer :all]))
 
 (def input (as-> (slurp "src/aoc22/day1/input.txt") %
              (str/split % #"\n\n")
              (map str/split-lines %)
              (map #(map read-string %) %)))
+
+;; ((8462 6981 3714 4409 8186 3614 2218 7558 6702)
+;;  (2947 4727 6396 5718 2361 1970 1583 2816 2995 6914 4313 1401)
+;;  (1643 7815 2162 8841 7671)
+;;  ...)
 
 (def total-calories-per-elf (map #(reduce + %) input))
 

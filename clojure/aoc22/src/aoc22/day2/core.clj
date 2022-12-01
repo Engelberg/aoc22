@@ -10,12 +10,13 @@
             [ubergraph.core :as uber]
             [ubergraph.alg :as alg]
             [instaparse.core :as insta]
-            [clojure.data.priority-map :as pm]))
+            [clojure.data.priority-map :as pm]
+            [com.rpl.specter :refer :all]))
 
 (def input (as-> (slurp "src/aoc22/day2/input.txt") %
-                (str/split % #"\n\n")
-                (map str/split-lines %)
-                (mapv #(mapv read-string %) %)))
+             (str/split % #"\n\n")
+             (map str/split-lines %)
+             (mapv #(mapv read-string %) %)))
 
 (def part1-solution (apply max (map #(reduce + %) input)))
 
