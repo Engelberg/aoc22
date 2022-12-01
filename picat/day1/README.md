@@ -11,3 +11,8 @@ As far as I know, Picat's arrays have a fixed-length, so the most efficient way 
 I got tripped up initially forgetting that indexing is 1-based in Picat, and it took me a while to debug the error message I was getting.
 
 I'd love to know if there's a more elegant pipeline-y way to do this in Picat. Also, I think I've seen some alternative syntaxes that are more concise for if-then-else constructs, but I forget how they work. My overall workflow for editing and debugging Picat is super clunky, so any tips there are welcome as well.
+
+You can compare with my Clojure code here:
+https://github.com/Engelberg/aoc22/blob/main/clojure/aoc22/src/aoc22/day1/core.clj
+
+Note that the Clojure code has a long header of libraries I typically import for most programming puzzles, even though none were utilized here.
