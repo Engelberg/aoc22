@@ -6,7 +6,7 @@ main(File) =>
     read_data(File,Nums),
     DescendingNums = sort_down(Nums),
     println(DescendingNums[1]),
-    println(DescendingNums[1]+DescendingNums[2]+DescendingNums[3]).
+    println(reduce(+,DescendingNums[1..3])).
 
 read_data(File,Nums) =>
     Lines = read_file_lines(File).to_array(),
