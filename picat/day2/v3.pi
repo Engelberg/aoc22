@@ -1,0 +1,45 @@
+import util, sat.
+
+main => time(main("input.txt")).
+
+beats(paper,rock). beats(rock,scissors). beats(scissors,paper).
+opponentRPS("A",rock). opponentRPS("B",paper). opponentRPS("C",scissors).
+playerRPS("X",rock). playerRPS("Y",paper). playerRPS("Z",scissors).
+playerStrategy("X",lose). playerStrategy("Y",draw). playerStrategy("Z",win).
+scoringTable(rock,1). scoringTable(paper,2). scoringTable(scissors,3).
+scoringTable(win,6). scoringTable(draw,3). scoringTable(lose,0).
+
+main(File) =>
+    Lines = [split(Line) : Line in read_file_lines(File)],
+    println(sum([score_throw(interpret_entry(Line)) : Line in Lines])),
+    println(sum([score_throw(interpret_entry_part2(Line)) : Line in Lines])).
+    
+interpret_entry([C1,C2]) = Z =>
+    opponentRPS(C1,OpponentThrow),
+    playerRPS(C2,PlayerThrow),
+    Z = [OpponentThrow,PlayerThrow].
+
+result([OpponentThrow,PlayerThrow]) = Z =>    
+    if beats(OpponentThrow,PlayerThrow) then
+      Z = lose
+    elseif beats(PlayerThrow,OpponentThrow) then
+      Z = win
+    else
+      Z = draw
+    end.
+    
+score_throw([T1,T2]) = N =>
+    scoringTable(T2,PointsForThrow),
+    scoringTable(result([T1,T2]),PointsForResult),
+    N = PointsForThrow + PointsForResult.
+
+interpret_entry_part2([C1,C2]) = Z =>
+    opponentRPS(C1,OpponentThrow),
+    playerStrategy(C2,DesiredResult),
+    PlayerThrow = first([Throw : Throw in [rock,paper,scissors],
+                          result([OpponentThrow,Throw]) == DesiredResult]),
+    Z = [OpponentThrow,PlayerThrow].
+
+    
+	   
+	   

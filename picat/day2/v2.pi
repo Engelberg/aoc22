@@ -1,0 +1,54 @@
+import util, sat.
+
+main => time(main("input.txt")).
+
+beats(paper,rock). beats(rock,scissors). beats(scissors,paper).
+
+main(File) =>
+    GM = get_global_map(),
+    Lines = [split(Line) : Line in read_file_lines(File)],
+    GM.put(opponentRPS, new_map(["A"=rock,"B"=paper,"C"=scissors])),
+    GM.put(playerRPS, new_map(["X"=rock,"Y"=paper,"Z"=scissors])),    
+    GM.put(playerStrategy, new_map(["X"=lose,"Y"=draw,"Z"=win])),
+    GM.put(scoringTable, new_map([rock=1,paper=2,scissors=3,win=6,draw=3,lose=0])),
+    println(sum([score_throw(interpret_entry(Line)) : Line in Lines])),
+    println(sum([score_throw(interpret_entry_part2(Line)) : Line in Lines])).
+    
+interpret_entry([C1,C2]) = Z =>
+    GM = get_global_map(),
+    OpponentRPS = GM.get(opponentRPS),
+    PlayerRPS = GM.get(playerRPS),
+    Z = [OpponentRPS.get(C1),PlayerRPS.get(C2)].
+
+result([OpponentThrow,PlayerThrow]) = Z =>    
+    if beats(OpponentThrow,PlayerThrow) then
+      Z = lose
+    elseif beats(PlayerThrow,OpponentThrow) then
+      Z = win
+    else
+      Z = draw
+    end.
+    
+score_throw([T1,T2]) = N =>
+    GM = get_global_map(),
+    ScoringTable = GM.get(scoringTable),
+    N = ScoringTable.get(T2) + ScoringTable.get(result([T1,T2])).
+
+interpret_entry_part2([C1,C2]) = Z =>
+    GM = get_global_map(),
+    OpponentRPS = GM.get(opponentRPS),
+    PlayerStrategy = GM.get(playerStrategy),
+    OpponentThrow = OpponentRPS.get(C1),
+    DesiredResult = PlayerStrategy.get(C2),
+    PlayerThrow = first([Throw : Throw in [rock,paper,scissors],
+                          result([OpponentThrow,Throw]) == DesiredResult]),
+    Z = [OpponentThrow,PlayerThrow].
+
+% For debugging
+print_list(List) =>
+    foreach (Item in List)
+      println(Item)
+    end.
+    
+	   
+	   
