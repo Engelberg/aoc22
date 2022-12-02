@@ -3,29 +3,43 @@ import util, sat.
 main => time(main("input.txt")).
 
 main(File) =>
-    read_data(File,Nums),
-    DescendingNums = sort_down(Nums),
-    println(DescendingNums[1]),
-    println(DescendingNums[1]+DescendingNums[2]+DescendingNums[3]).
-
-read_data(File,Nums) =>
-    Lines = read_file_lines(File).to_array(),
-    parse_lines(1,0,Lines,Nums).
+    Lines := [split(Line) : Line in read_file_lines(File)],
+    OpponentRPS := new_map(["A"=rock,"B"=paper,"C"=scissors]),
+    PlayerRPS := new_map(["X"=rock,"Y"=paper,"Z"=scissors]),    
+    PlayerStrategy := new_map(["X"=lose,"Y"=draw,"Z"=win]),
+    ScoringTable := new_map([rock=1,paper=2,scissors=3,win=6,draw=3,lose=0]),
+    LosingCombos := new_set([[paper,rock],[rock,scissors],[scissors,paper]]),
+    println(sum([score_throw(ScoringTable,LosingCombos,
+                  interpret_entry(OpponentRPS,PlayerRPS,Line)) : Line in Lines])),
+    println(sum([score_throw(ScoringTable,LosingCombos,
+                  interpret_entry_part2(OpponentRPS,PlayerStrategy,LosingCombos,Line)) : Line in Lines])).
     
-parse_lines(I,Calories,Lines,Nums) =>
-    if (I > Lines.length()) then
-      Nums = []
-    elseif (Lines[I] == "") then
-      Nums = [Calories|Tail],
-      parse_lines(I+1,0,Lines,Tail)
-    else
-      Calories := Calories + to_integer(Lines[I]),
-      parse_lines(I+1,Calories,Lines,Nums)
-    end.
+interpret_entry(OpponentRPS,PlayerRPS,[C1,C2]) = Z =>
+    Z = [OpponentRPS.get(C1),PlayerRPS.get(C2)].
 
-print_result(Nums) =>
-    foreach (Num in Nums)
-      println(Num)
+result(LosingCombos,[OpponentThrow,PlayerThrow]) = Z =>    
+    if (LosingCombos.has_key([OpponentThrow,PlayerThrow])) then
+      Z = lose
+    elseif (LosingCombos.has_key([PlayerThrow,OpponentThrow])) then
+      Z = win
+    else
+      Z = draw
+    end.
+    
+score_throw(ScoringTable,LosingCombos,[T1,T2]) = N =>
+    N = ScoringTable.get(T2) + ScoringTable.get(result(LosingCombos,[T1,T2])).
+
+interpret_entry_part2(OpponentRPS,PlayerStrategy,LosingCombos,[C1,C2]) = Z =>
+    OpponentThrow := OpponentRPS.get(C1),
+    DesiredResult := PlayerStrategy.get(C2),
+    PlayerThrow := first([Throw : Throw in [rock,paper,scissors],
+                          result(LosingCombos,[OpponentThrow,Throw]) == DesiredResult]),
+    Z = [OpponentThrow,PlayerThrow].
+
+% For debugging
+print_list(List) =>
+    foreach (Item in List)
+      println(Item)
     end.
     
 	   
