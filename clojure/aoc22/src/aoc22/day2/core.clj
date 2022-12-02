@@ -13,30 +13,27 @@
             [clojure.data.priority-map :as pm]
             [com.rpl.specter :refer :all]))
 
-(def input (as-> (slurp "src/aoc22/day2/input.txt") %
-             (str/split-lines %)
-             (map #(str/split % #" ") %)))
+(def input (for [line (str/split-lines (slurp "src/aoc22/day2/input.txt"))]
+             (str/split line #" ")))
 
 (def opponent-rps {"A" :rock, "B" :paper, "C" :scissors})
 (def player-rps {"X" :rock, "Y" :paper, "Z" :scissors})
-
 (def scoring-table {:rock 1, :paper 2, :scissors 3,
                     :win 6, :draw 3, :lose 0})
 
 (defnc interpret-entry [[o p]] [(opponent-rps o) (player-rps p)])
 
-(def losing-combos #{[:paper :rock] [:rock :scissors] [:scissors :paper]})
+(def beats? #{[:paper :rock] [:rock :scissors] [:scissors :paper]})
 
 (defnc result [[opponent-throw player-throw]]
-  (contains? losing-combos [opponent-throw player-throw]) :lose
-  (contains? winning-combos [player-throw opponent-throw]) :win
+  (beats? [opponent-throw player-throw]) :lose
+  (beats? [player-throw opponent-throw]) :win
   :else :draw)
 
 (defnc rps-score [throws]
   (+ (scoring-table (peek throws)) (scoring-table (result throws))))
 
-(def solution-part1 (transduce (comp (map interpret-entry) (map rps-score))
-                               + input))
+(def solution-part1 (transduce (comp (map interpret-entry) (map rps-score)) + input))
 
 (def player-strategy {"X" :lose, "Y" :draw, "Z" :win})
 
@@ -48,7 +45,6 @@
                 :when (= (result [opponent-throw throw]) player-result)]
             throw))])
 
-(def solution-part2 (transduce (comp (map interpret-entry-part2) (map rps-score))
-                               + input))
+(def solution-part2 (transduce (comp (map interpret-entry-part2) (map rps-score)) + input))
 
 
