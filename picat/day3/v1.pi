@@ -1,0 +1,25 @@
+import util, ordset.
+
+main => time(main("input.txt")).
+
+main(File) =>
+    Lines := read_file_lines(File),
+    println(sum([priority(item_in_both_compartments(Line)) : Line in Lines])),
+    println(sum([priority(first(intersection(intersection(new_ordset(Group[1]),new_ordset(Group[2])),new_ordset(Group[3])))) : Group in partition_list(Lines)]))
+    .
+    
+priority(Char) = Z =>
+  Ascii = ord(Char),
+  if (Ascii >= 97) then
+    Z = Ascii - 96
+  else
+    Z = Ascii - 38.
+
+item_in_both_compartments(Line) = Z =>
+  L = len(Line)/<2,
+  Z = first(intersection(new_ordset(Line[1..L]),new_ordset(Line.slice(L+1)))).
+
+partition_list(List) = Partitioned =>
+    Partitioned = [List[I*3-2..I*3] : I in 1..len(List)/<3].
+	   
+	   
