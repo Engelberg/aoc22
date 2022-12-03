@@ -5,7 +5,7 @@ main => time(main("input.txt")).
 main(File) =>
     Lines := read_file_lines(File),
     println(sum([priority(item_in_both_compartments(Line)) : Line in Lines])),
-    println(sum([priority(first(intersection(intersection(new_ordset(Group[1]),new_ordset(Group[2])),new_ordset(Group[3])))) : Group in partition_list(Lines)]))
+    println(sum([priority(first(intersection(intersection(new_ordset(Group[1]),new_ordset(Group[2])),new_ordset(Group[3])))) : Group in chunks_of(Lines,3)]))
     .
     
 priority(Char) = Z =>
@@ -19,7 +19,5 @@ item_in_both_compartments(Line) = Z =>
   L = len(Line)/<2,
   Z = first(intersection(new_ordset(Line[1..L]),new_ordset(Line.slice(L+1)))).
 
-partition_list(List) = Partitioned =>
-    Partitioned = [List[I*3-2..I*3] : I in 1..len(List)/<3].
 	   
 	   
