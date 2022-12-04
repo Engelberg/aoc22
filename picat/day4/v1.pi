@@ -1,0 +1,19 @@
+import util, ordset.
+
+main => time(main("input.txt")).
+
+main(File) =>
+    Lines = [map(to_integer,[Lower1,Upper1,Lower2,Upper2]) : Line in read_file_lines(File),
+      [Assign1,Assign2] = split(Line,","),
+      [Lower1,Upper1] = split(Assign1,"-"),
+      [Lower2,Upper2] = split(Assign2,"-")],    
+    println(len([Line : Line in Lines, fullyContained(Line)])),
+    println(len([Line : Line in Lines, overlap(Line)])).
+    
+fullyContained([Lower1,Upper1,Lower2,Upper2]) =>
+      ((Lower1 <= Lower2) && (Upper2 <= Upper1)) ||
+          ((Lower2 <= Lower1) && (Upper1 <= Upper2)).
+
+overlap([Lower1,Upper1,Lower2,Upper2]) =>
+      max(Lower1,Lower2) <= min(Upper1,Upper2).
+      

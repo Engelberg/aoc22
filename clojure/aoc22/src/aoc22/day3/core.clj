@@ -24,5 +24,7 @@
                                    :let [[comp1 comp2] (split-at (quot (count line) 2) line)]]
                                (priority (first (set/intersection (set comp1) (set comp2)))))))
 
+(def solution-part1 (transduce (map #(priority (first (apply set/intersection (map set (split-at (quot (count %) 2) %)))))) + input))
+
 (def solution-part2 (apply + (for [group (partition 3 input)]
                                (priority (first (apply set/intersection (map #(set (nth group %)) (range 3))))))))
