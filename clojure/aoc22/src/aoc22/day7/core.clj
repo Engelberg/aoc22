@@ -47,5 +47,5 @@
 (def free-space (- 70000000 (:size directory-structure)))
 (def needed-to-free (- 30000000 free-space))
 
-(def solution-part2 (:size (first (drop-while #(< (:size %) needed-to-free)
-                                              (sort-by :size (dir-seq directory-structure))))))
+(def solution-part2 (transduce (comp (map :size) (filter #(>= % needed-to-free)))
+                               min Long/MAX_VALUE (dir-seq directory-structure)))
