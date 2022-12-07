@@ -32,7 +32,7 @@
 (defnc build-tree [commands] (first (reduce build-tree-from-command [{} []] commands)))
 
 (defnc add-size-information [{:keys [dirs files] :as tree}]
-  :let [filesize (apply + (map first files)),
+  :let [filesize (transduce (map first) + files),
         dirs-with-sizes (into {} (for [[dir contents] dirs] [dir (add-size-information contents)])),
         dirsizes (transduce (comp (map val) (map :size)) +  dirs-with-sizes)]
   (assoc tree :dirs dirs-with-sizes :size (+ filesize dirsizes)))
