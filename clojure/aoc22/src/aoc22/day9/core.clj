@@ -17,21 +17,15 @@
                  :let [[dir n] (str/split l #"\s")]]
              [(keyword dir) (parse-long n)]))
 
-(defnc v+ [[a b] [c d]] [(+ a c) (+ b d)])
 (def dv {:R [1 0], :L [-1 0], :U [0 -1], :D [0 1]})
 (defnc neighbor? [[x1 y1] [x2 y2]] (and (<= (abs (- x1 x2)) 1) (<= (abs (- y1 y2)) 1)))
 
-(defnc move-tail [[Hx Hy :as head] [Tx Ty :as tail]]
+(defnc move-tail [head tail]
   (neighbor? head tail) tail
-  (= Hx Tx) (if (< Hy Ty) [Tx (dec Ty)] [Tx (inc Ty)])
-  (= Hy Ty) (if (< Hx Tx) [(dec Tx) Ty] [(inc Tx) Ty])
-  (and (< Hx Tx) (< Hy Ty)) [(dec Tx) (dec Ty)]
-  (and (< Hx Tx) (> Hy Ty)) [(dec Tx) (inc Ty)]
-  (and (> Hx Tx) (< Hy Ty)) [(inc Tx) (dec Ty)]
-  :else [(inc Tx) (inc Ty)])
+  (mapv + tail (map compare head tail)))
 
 (defnc simulate-step [rope dir]
-  :let [[Hx Hy :as head] (v+ (rope 0) (dv dir))]
+  :let [head (mapv + (rope 0) (dv dir))]
   (loop [new-rope [head], rope (next rope)]
     (cond
       (nil? rope) new-rope 
