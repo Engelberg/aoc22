@@ -41,7 +41,7 @@
 (defnc unroll-directions [directions] (mapcat (fn [[dir n]] (repeat n dir)) directions))
 
 (defnc count-tail-positions [num-links]
-  (count (into #{} (map peek) (reductions simulate-step (vec (for [i (range num-links)] [0 0]))
+  (count (into #{} (map peek) (reductions simulate-step (vec (repeat num-links [0 0]))
                                           (unroll-directions input)))))
 
 (println (count-tail-positions 2))
