@@ -16,7 +16,7 @@
 (def input (vec (for [block (str/split (slurp "src/aoc22/day11/input.txt") #"\n\n")
                       :let [[l1 l2 l3 l4 l5 l6] (str/split-lines block),
                             monkey (read-string (last (str/split l1 #"\s+|:")),)
-                            starting-items (mapv read-string (drop 3 (str/split l2 #"\s+|,\s+")))
+                            starting-items (med/queue (map read-string (drop 3 (str/split l2 #"\s+|,\s+"))))
                             [arg1 op arg2] (map read-string (drop 4 (str/split l3 #"\s+"),))
                             divisor (read-string (last (str/split l4 #"\s+"))),
                             true-monkey (read-string (last (str/split l5 #"\s+"))),
@@ -30,12 +30,12 @@
 (defnc simulate-monkey [monkeys monkey]
   :let [{:keys [items worry-fn divisor true-monkey false-monkey]} (nth monkeys monkey)]
   (empty? items) monkeys,
-  :let [item (first items),
+  :let [item (peek items),
         worry (if *part1* (quot (worry-fn item) 3) (mod (worry-fn item) common-divisor)),        
         test? (zero? (mod worry divisor)),
         next-monkey (if test? true-monkey false-monkey),
         monkeys (->> monkeys (multi-transform (multi-path
-                                               [monkey (multi-path [:items (terminal #(subvec % 1))]
+                                               [monkey (multi-path [:items (terminal pop)]
                                                                    [:inspections (terminal inc)])]
                                                [next-monkey :items (terminal #(conj % worry))])))]
   (recur monkeys monkey))
