@@ -45,7 +45,7 @@
 (def beacons-by-row (apply merge-with into (for [[bx by] (set (map second input))] {by [[bx by]]})))
 
 (defnc solution-part-1 []
-  (- (apply + (map size-range (no-beacon-ranges 2000000 input)))
+  (- (apply + (map size-range (no-beacon-ranges input 2000000)))
      (count (beacons-by-row 2000000))))
 
 (defnc beacon-ruled-out? [ranges]
