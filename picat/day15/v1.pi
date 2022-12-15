@@ -1,0 +1,23 @@
+import util, smt.
+
+% I made my input.txt file a little easier to parse.
+
+main => time(main("input.txt")).
+
+main(File) =>
+    Lines = [map(to_integer,(split(Line," "))) : Line in read_file_lines(File)],      
+    [Dx,Dy] :: 0..4000000,    
+    foreach ([Sx,Sy,Bx,By] in Lines)
+      M = abs(Sx-Bx) + abs(Sy-By),
+      max([Sx-Dx,Dx-Sx]) + max([Sy-Dy,Dy-Sy]) #> M
+    end,
+    solve([Dx,Dy]),
+    println(tuningFrequency(Dx,Dy)).
+
+tuningFrequency(X,Y) = Z =>
+    Z = X * 4000000 + Y.
+    
+
+    
+    
+      
