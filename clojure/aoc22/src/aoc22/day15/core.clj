@@ -13,8 +13,6 @@
             [clojure.data.priority-map :as pm]
             [com.rpl.specter :refer :all]))
 
-(defnc irange [start stop] (range start (inc stop)))
-
 (def input-parser (insta/parser "<S> = <'Sensor at x='> NUM <', y='> NUM <': closest beacon is at x='> NUM <', y='> NUM
                            <NUM> = #'-?[0-9]+'"))
 
