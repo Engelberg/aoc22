@@ -63,7 +63,7 @@
               [x i])))
 
 (defnc find-repeat []
-  (loop [simulation (drop 6 (iterate simulate-rock-fall [starting-cave rocks gases])), i 0, seen {}]
+  (loop [simulation (iterate simulate-rock-fall [starting-cave rocks gases]), i 0, seen {}]
     (cond
       :let [[cave rocks gases] (first simulation), simulation (next simulation),
             state [(top-rows cave) (first (first rocks)) (first (first gases))],
@@ -73,9 +73,8 @@
 
 (def target 1000000000000)
 
-(defnc compute-height [target [l h]]
-  :let [lb (+ l 6), hb (+ h 6),
-        period (- h l),
+(defnc compute-height [target [lb hb]]
+  :let [period (- hb lb),
         num-periods (quot (- target lb) period),
         period-height (- (max-height (nth simulation hb)) (max-height (nth simulation lb))),
         residual (mod (- target lb) period)]
