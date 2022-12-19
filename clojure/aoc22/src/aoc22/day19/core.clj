@@ -70,41 +70,73 @@
 (defnc next-states [blueprint [time robots minerals :as state] cutoff]
   (= time cutoff) nil
   :let [states (for [robot (range 0 4)
+                     :when (not (useless-build? blueprint state robot))
                      :let [s (build blueprint state robot)]
                      :when (and s (<= (nth s 0) cutoff))]
                  s)]
   (seq states) states
   :else [[cutoff robots (reduce v+ minerals (repeat (- cutoff time) robots))]])
 
-(defnc geode-bots [s] (peek (nth s 1)))
-(defnc min-time-to-build-geode-robot [blueprint initial-states]
-  :let [g (geode-bots (first initial-states))]
-  (alg/shortest-path (fn [s] (for [state (next-states blueprint s MAXTIME)] {:dest state,
-                                                                             :weight (- (nth state 0) (nth s 0))}))
-                     {:start-nodes initial-states, :end-node? #(> (geode-bots %) g), :cost-attr :weight}))
+;; (defnc geode-bots [s] (peek (nth s 1)))
+;; (defnc min-time-to-build-geode-robot [blueprint initial-states]
+;;   :let [g (geode-bots (first initial-states))]
+;;   (alg/shortest-path (fn [s] (for [state (next-states blueprint s MAXTIME)] {:dest state,
+;;                                                                              :weight (- (nth state 0) (nth s 0))}))
+;;                      {:start-nodes initial-states, :end-node? #(> (geode-bots %) g), :cost-attr :weight}))
 
-(defnc sum-from [x y]
-  (<= y x) 0
-  (- (quot (+ y (inc y)) 2)
-     (quot (+ x (inc x)) 2)))
+;; (defnc sum-from [x y]
+;;   (<= y x) 0
+;;   (- (quot (+ y (inc y)) 2)
+;;      (quot (+ x (inc x)) 2)))
 
-;; (defnc max-geodes [blueprint [time robots minerals :as state] min-time]
-;;   :let [time-remaining (- MAXTIME time)]
-;;   (+ (geodes state) (* (peek robots) time-remaining)
-;;      (apply + (for [i (range (+ time min-time) MAXTIME min-time)]
-;;                 (- MAXTIME i)))))
+;; ;; (defnc max-geodes [blueprint [time robots minerals :as state] min-time]
+;; ;;   :let [time-remaining (- MAXTIME time)]
+;; ;;   (+ (geodes state) (* (peek robots) time-remaining)
+;; ;;      (apply + (for [i (range (+ time min-time) MAXTIME min-time)]
+;; ;;                 (- MAXTIME i)))))
+
+(defnc max-minerals-needed [blueprint]
+  (vec (for [i (range 4)] (apply max (map #(nth % i) blueprint)))))
+(def max-minerals-needed (memoize max-minerals-needed))
+
+(defnc useless-build? [blueprint [time robots minerals :as state] i]
+  (= i 3) false
+  :let [max-minerals (max-minerals-needed blueprint)
+        time-remaining (- MAXTIME time)]
+  (or 
+   (>= (robots i) (max-minerals i))
+   (>= (+ (minerals i) (* time-remaining (robots i))) (* (max-minerals i) time-remaining))))
 
 (defnc max-geodes [blueprint [time robots minerals :as state]]
   :let [time-remaining (- MAXTIME time)]
-  (+ (geodes state) (sum-from (+ time 2) MAXTIME) (* (peek robots) time-remaining)))
+  (+ (geodes state) (* (peek robots) time-remaining)
+     (quot (* (- MAXTIME time) (inc (- MAXTIME time))) 2)))
 
+(defnc max-geodes [blueprint [time robots minerals :as state]]
+  :let [time-remaining (- MAXTIME time),
+        max-minerals (max-minerals-needed blueprint)]
+  (loop [time time robots robots minerals-copied (vec (repeat 4 (vec minerals)))]
+    ;;    (println time robots minerals-copied)
+    (cond
+      (>= time MAXTIME) (peek (minerals-copied 0))
+      :let [new-robots (vec (for [i (range 4)]
+                              (cond
+                                :let [minerals (minerals-copied i)]
+                                (useless-build? blueprint state i) 0
+                                (if (reduce andf (mapv <= (blueprint i) minerals)) 1 0)))),
+            new-minerals (vec (for [i (range 4)]
+                                (cond
+                                  :let [minerals (minerals-copied i)]
+                                  (= (new-robots i) 1) (v- (v+ robots minerals) (blueprint i))
+                                  :else (v+ robots minerals))))]
+      (recur (inc time) (v+ robots new-robots) new-minerals))))
 
 (defnc search-states [blueprint state]
-  (loop [states [state], best 0]
+  (loop [states [state], best 0 #_(greedy blueprint state)]
     (cond
       (= (count states) 0) best
-      :let [s (peek states), ns (next-states blueprint s), states (into (pop states) ns), g (geodes s)]
-      (<= (max-geodes blueprint1 s) best) (recur states best)
+      :let [s (peek states), ns (next-states blueprint s MAXTIME),
+            states (into (pop states) (filter #(> (max-geodes blueprint %) best)) ns), g (geodes s)]
       ;;:do (println s)
       (> g best) (do (println g) (recur states g))
       :else (recur states best))))
@@ -131,10 +163,9 @@
             time-to-build-geode-robot (first build-another-geode-robot)]
       ;;      :do (println states time-to-build-geode-robot (geode-bots build-another-geode-robot))
       (nil? build-another-geode-robot) (peek (reduce v+ minerals (repeat (- MAXTIME time) robots)))
+      ;;      (recur [build-another-geode-robot]))))
       :let [next-states (all-states blueprint states time-to-build-geode-robot
                                     (geode-bots build-another-geode-robot))]
-      ;;      :do (println "After")
-      ;;      :do (flush)
       (recur next-states))))
 
 (defnc solution-part-1 []
@@ -152,3 +183,6 @@
               _ (println i num-geodes)
               ]]
     [i  num-geodes]))
+
+(defnc solution-part-2 []
+  (apply * (mapv #(search-states (nth input %) initial-state) (range 3))))
