@@ -19,9 +19,9 @@
 (defnc v+ [x y] (mapv + x y))
 (defnc andf [x y] (and x y))
 
-(def MAXTIME 32)
+(def MAXTIME 24)
 
-(def input (vec (for [l (str/split-lines (slurp "src/aoc22/day19/sample.txt"))
+(def input (vec (for [l (str/split-lines (slurp "src/aoc22/day19/input.txt"))
                       :let [[a b c d e f g] (map parse-long (re-seq #"[0-9]+" l))]]
                   [[b 0 0 0] [c 0 0 0] [d e 0 0] [f 0 g 0]])))
 
@@ -80,7 +80,7 @@
 (defnc min-time-to-build-geode-robot [blueprint initial-states]
   :let [g (geode-bots (first initial-states))]
   (alg/shortest-path (fn [s] (for [state (next-states blueprint s MAXTIME)] {:dest state,
-                                                                        :weight (- (nth state 0) (nth s 0))}))
+                                                                             :weight (- (nth state 0) (nth s 0))}))
                      {:start-nodes initial-states, :end-node? #(> (geode-bots %) g), :cost-attr :weight}))
 
 (defnc sum-from [x y]
@@ -145,6 +145,10 @@
                      num-geodes (greedy blueprint initial-state)]]
            (* (inc i) num-geodes))))
 
-(defnc max-geodes-producible [time-left [robots minerals]]
-  (= time-left 0) 0
-  (= time-left 1) (peek robots)
+(defnc solution-part-1 []
+  (for [i (range NUM-BLUEPRINTS)
+        :let [blueprint (input i),
+              num-geodes (greedy blueprint initial-state)
+              _ (println i num-geodes)
+              ]]
+    [i  num-geodes]))
