@@ -97,7 +97,7 @@
   (apply + 
          (for [i (range NUM-BLUEPRINTS)
                :let [blueprint (input i),
-                     _ (println i)
+                     _ (println "Blueprint " i)
                      num-geodes (search-states blueprint initial-state 24)]]
            (* (inc i) num-geodes))))
 
