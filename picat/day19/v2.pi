@@ -1,0 +1,49 @@
+import util, sat.
+
+% I made my input.txt file a little easier to parse.
+
+main => time(main("input.txt")).
+
+main(File) =>
+    Lines = [map(to_integer,split(Line," ")) : Line in read_file_lines(File)],      
+    println(sum([bestBuild(Blueprint,24)*I : I in 1..len(Lines),makeBlueprint(Lines[I],Blueprint)])),
+    println(prod([bestBuild(Blueprint,32) : I in 1..3,makeBlueprint(Lines[I],Blueprint)])).
+    
+makeBlueprint([A,B,C,D,E,F,G],Blueprint) =>
+    Blueprint = [[B,0,0,0],
+                 [C,0,0,0],
+                 [D,E,0,0],
+                 [F,0,G,0],
+                 [0,0,0,0]].
+
+bestBuild(Blueprint,Maxtime) = Z =>
+    Build = new_array(Maxtime,5),
+    Build :: 0..1,
+    % Build[T,I] is 1 iff you build a bot of type I at time T. I=5 means no build.
+    foreach (T in 1..Maxtime)
+      sum([Build[T,I] : I in 1..5]) #= 1
+    end,
+    Cost = new_array(Maxtime,4),
+    % Cost[T,Resource] is how much of type Resource is spent, based on what was built at time T.
+    foreach (T in 1..Maxtime, Resource in 1..4)
+      Cost[T,Resource] #= sum([Build[T,Bot] * Blueprint[Bot,Resource]: Bot in 1..5])
+    end,
+    % Resources[T,Resource] is how much of type Resource is available at beginning of time T.
+    % Bots[T,Resource] is how many bots you have of Resource at beginning of time T.
+    Resources = new_array(Maxtime+1,4),
+    Bots = new_array(Maxtime+1,4),
+    Resources[1,1] #= 0, Resources [1,2] #= 0, Resources[1,3] #= 0, Resources[1,4] #= 0,
+    Bots[1,1] #= 1, Bots [1,2] #= 0, Bots[1,3] #= 0, Bots[1,4] #= 0,
+    foreach (T in 1..Maxtime, Resource in 1..4)
+      Resources[T+1,Resource] #= Resources[T,Resource]+Bots[T,Resource]-Cost[T,Resource],
+      Bots[T+1,Resource] #= Bots[T,Resource]+Build[T,Resource],      
+      Resources[T,Resource] #>= Cost[T,Resource]
+    end,
+    solve([$max(Resources[Maxtime+1,4])],Build++Cost++Resources),
+    Z = Resources[Maxtime+1,4].
+    
+    
+
+    
+    
+      
