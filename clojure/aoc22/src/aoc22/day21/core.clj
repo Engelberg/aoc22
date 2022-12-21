@@ -1,4 +1,4 @@
-(ns aoc22.day20.core
+(ns aoc22.day21.core
   (:refer-clojure :exclude [cond if-let if-some when-let when-some])
   (:require [better-cond.core :refer [cond if-let if-some when-let when-some defnc defnc-]]            
             [clojure.string :as str]
