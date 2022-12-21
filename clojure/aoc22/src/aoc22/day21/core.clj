@@ -52,4 +52,8 @@
   (constrain-node g2))
 
 
-
+;; For exporting to picat, as a curiosity
+;; (doseq [[v1 v2 v3 v4] input] (cond
+;;                                (nil? v3) (println (str/upper-case v1) "#=" v2 ",")
+;;                                (= v3 "/") (println (str/upper-case v2) "#=" (str/upper-case v1) "*" (str/upper-case v4) ",")
+;;                                :else (println (str/upper-case v1) "#=" (str/upper-case v2) (str v3) (str/upper-case v4) ",")))
