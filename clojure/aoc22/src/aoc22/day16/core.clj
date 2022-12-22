@@ -1,17 +1,10 @@
 (ns aoc22.day16.core
   (:refer-clojure :exclude [cond if-let if-some when-let when-some])
   (:require [better-cond.core :refer [cond if-let if-some when-let when-some defnc defnc-]]
-            [clojure.math.numeric-tower :as nt]
-            [clojure.math :as math]
-            [medley.core :as med]
-            [clojure.math.combinatorics :as comb]
-            [clojure.set :as set]
             [clojure.string :as str]
             [ubergraph.core :as uber]
             [ubergraph.alg :as alg]
-            [instaparse.core :as insta]
-            [clojure.data.priority-map :as pm]
-            [com.rpl.specter :refer :all]))
+            [instaparse.core :as insta]))
 
 (def input-parser (insta/parser "S = <'Valve '> Valve <' has flow rate='> Num <'; '> <#'\\S+\\s+\\S+\\s+\\S+\\s+\\S+\\s+'> Valves
                                  Valve = #'[A-Z][A-Z]'
