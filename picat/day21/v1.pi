@@ -2922,7 +2922,7 @@ NNNV #= FSTR * CHVD ,
 TSNT #= NRJS * VFWS ,
 VVPF #= 11 ,
 LZQW #= CHVZ + HRHD ,
-    solve([ROOT]),
+%    solve([ROOT]),
     println(ROOT).
     
     
