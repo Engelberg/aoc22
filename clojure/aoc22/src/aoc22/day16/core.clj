@@ -61,17 +61,15 @@
 
 ;; Part 2
 
-(defnc all-completed-states [states completed-states best-state]
+(defnc all-completed-states "Prints answer quickly, proves optimality in 4s" [states completed-states]
   (= (count states) 0) (vals (apply merge-with (partial max-key :flow) completed-states))
   :let [state (peek states), states (pop states)]
-  (complete? state) (recur states (conj completed-states {(:valves state) state})
-                           (if (> (:flow state) (:flow best-state)) state best-state))
-  (< (upper-bound state) (:flow best-state)) (recur states completed-states best-state)
-  (recur (into states (next-states state)) completed-states best-state))
+  (complete? state) (recur states (conj completed-states {(:valves state) state}))
+  (recur (into states (next-states state)) completed-states))
 
 (defnc solution-part-2 []
   (binding [*MAXTIME* 26]
-    (loop [human-states (seq (sort-by :flow > (all-completed-states [initial-state] [] initial-state))),
+    (loop [human-states (seq (sort-by :flow > (all-completed-states [initial-state] []))),
            best-elephant-state {:flow 0}]
       (cond
         (nil? human-states) (:flow best-elephant-state)
