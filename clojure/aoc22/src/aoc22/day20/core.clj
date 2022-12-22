@@ -47,13 +47,6 @@
     (reset! (:prev n) link1)
     (reset! (:next link1) n)))
 
-(defn insert-link-before [link1 link2]
-  (let [p @(:prev link2)]
-    (reset! (:prev link2) link1)
-    (reset! (:next link1) link2)
-    (reset! (:next p) link1)
-    (reset! (:prev link1) p)))
-
 (defnc move [links i]
   :let [link (links i),
         n (:value link),
@@ -61,9 +54,8 @@
         n (mod (abs n) (dec (count links)))]
   (zero? n) links
   :do (remove-link link)
-  :let [attachment-point (get-link link (abs n) (if pos-n? :next :prev))]
-  pos-n? (do (insert-link-after link attachment-point) links)
-  :else (do (insert-link-before link attachment-point) links))
+  :let [attachment-point (get-link @(:prev link) (abs n) (if pos-n? :next :prev))]
+  (do (insert-link-after link attachment-point) links))
 
 (defnc decrypt [links]
   (reduce move links (range (count links))))
