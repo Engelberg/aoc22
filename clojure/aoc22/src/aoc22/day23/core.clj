@@ -69,7 +69,7 @@
         max-col (apply max (map second grid))]
   [min-row max-row min-col max-col])
 
-(defnc print-grid [grid]
+(defnc print-grid "For debugging" [grid]
   :let [[min-row max-row min-col max-col] (grid-bounds grid)]
   :do (doseq [row (irange min-row max-row)]
         (doseq [col (irange min-col max-col)]
