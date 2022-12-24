@@ -20,5 +20,5 @@
                  [loco "0.3.1"]
                  [org.clojure/core.async "1.6.673"]
                  [org.clj-commons/claypoole "1.2.2"]]
-  :jvm-opts ^:replace ["-Xms1g" "-Xmx8g" "-server"]  
+  :jvm-opts ^:replace ["-Xms1g" "-Xmx14g" "-server"]  
   :repl-options {:init-ns aoc22.core})
