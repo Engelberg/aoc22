@@ -3,6 +3,7 @@
   (:require [better-cond.core :refer [cond if-let if-some when-let when-some defnc defnc-]]
             [clojure.set :as set]
             [clojure.string :as str]
+            [medley.core :as med]
             [ubergraph.core :as uber]
             [ubergraph.alg :as alg]))
 
@@ -15,7 +16,6 @@
 (def input (str/split-lines (slurp "src/aoc22/day24/input.txt")))
 (def ROWS (- (count input) 2))
 (def COLS (- (count (first input)) 2))
-(def PERIOD 600) ;; Found by doing (count (set (take (* ROWS COLS) (iterate update-blizzards blizzards))))
 
 (defnc v+-wrap [[a b] [c d]]
   [(mod (+ a c) ROWS) (mod (+ b d) COLS)])
@@ -38,6 +38,8 @@
 
 (defnc update-blizzards [bs]
   (apply merge-with into (for [[pt dirs] bs, dir dirs] {(v+-wrap pt dir) [dir]})))
+(def update-blizzards (memoize update-blizzards))
+(def PERIOD (count (set (take (* ROWS COLS) (iterate update-blizzards blizzards)))))
 
 (def all-possible-blizzards (vec (take PERIOD (iterate update-blizzards blizzards))))
 
