@@ -1,18 +1,10 @@
 (ns aoc22.day24.core
   (:refer-clojure :exclude [cond if-let if-some when-let when-some])
   (:require [better-cond.core :refer [cond if-let if-some when-let when-some defnc defnc-]]
-            [clojure.math.numeric-tower :as nt]
-            [clojure.math :as math]
-            [medley.core :as med]
-            [clojure.math.combinatorics :as comb]
             [clojure.set :as set]
             [clojure.string :as str]
             [ubergraph.core :as uber]
-            [ubergraph.alg :as alg]
-            [instaparse.core :as insta]
-            [clojure.data.priority-map :as pm]
-            [com.rpl.specter :refer :all]
-            [clojure.java.io :as io]))
+            [ubergraph.alg :as alg]))
 
 (defnc irange [x y] (range x (inc y)))
 (def v+ (partial mapv +))
@@ -82,7 +74,6 @@
                                                      {:start-node trip2, :end-node? (end-state? end-cell)
                                                       :heuristic-fn (lower-bound end-cell)})]
   (+ cost1 cost2 cost3))
-
 
 ;; For debugging
 
